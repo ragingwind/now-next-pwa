@@ -1,20 +1,37 @@
 {
   "name": "now-next-pwa",
-  "version": "0.0.1",
+  "version": "0.0.9",
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "dist/index.js",
   "files": [
-    "lib"
+    "dist"
   ],
   "scripts": {
-    "test": "jest test"
+    "build": "./build.sh",
+    "test": "jest test",
+    "prepublishOnly": "./build.sh"
   },
   "devDependencies": {
-    "jest": "^24.9.0",
-    "@now/build-utils": "^0.9.13"
-  },
-  "dependencies": {
+    "@now/build-utils": "^0.9.13",
+    "@now/node-bridge": "1.2.2",
+    "@types/aws-lambda": "^8.10.31",
+    "@types/fs-extra": "^8.0.0",
+    "@types/glob": "^7.1.1",
+    "@types/next-server": "8.0.0",
+    "@types/node": "^12.7.2",
+    "@types/resolve-from": "5.0.1",
+    "@types/semver": "6.0.0",
+    "@zeit/ncc": "^0.20.4",
+    "aws-lambda": "^0.1.2",
     "fs-extra": "^8.1.0",
-    "html-minifier": "^4.0.0"
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "resolve-from": "^5.0.0",
+    "semver": "^6.3.0",
+    "typescript": "^3.5.3"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5"
   }
 }
