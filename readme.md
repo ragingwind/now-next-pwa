@@ -9,7 +9,6 @@
 ```sh
 now init nextjs
 cd nextjs
-npm install --save-dev now-next-pwa
 ```
 
 ## Add service worker register code at pages/index.js
