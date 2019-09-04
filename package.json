@@ -1,8 +1,12 @@
 {
   "name": "now-next-pwa",
-  "version": "0.0.44",
+  "version": "0.1.00",
   "license": "MIT",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ragingwind/now-next-pwa"
+  },
   "files": [
     "dist"
   ],
@@ -22,8 +26,10 @@
     "@zeit/ncc": "^0.20.4",
     "aws-lambda": "^0.1.2",
     "fs-extra": "^8.1.0",
+    "get-port": "^5.0.0",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
+    "resolve-from": "^5.0.0",
     "typescript": "^3.5.3",
     "workbox-build": "^4.3.1"
   },
