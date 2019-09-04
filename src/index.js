@@ -31,7 +31,7 @@ const swConfig = {
 const excludeRoutes = new RegExp(/_error$/);
 
 const createPage = async ({
-  buildResult,
+  output,
   entryPath,
   filename,
   content,
@@ -39,17 +39,16 @@ const createPage = async ({
   mode = 33188,
 }) => {
   const route = `_next/static/${buildId}/pages/${filename}`;
-  const output = path.join(
+  const page = path.join(
     entryPath,
     `.next/static/${buildId}/pages/${filename}`
   );
 
-  console.log('write', output, content);
-  await writeFile(output, content);
+  await writeFile(page, content);
 
-  buildResult.output[route] = await FileFsRef.fromFsPath({
+  output[route] = await FileFsRef.fromFsPath({
     mode: mode,
-    fsPath: output,
+    fsPath: page,
   });
 
   return route;
@@ -68,6 +67,39 @@ const getBuildId = output => {
   return buildId;
 };
 
+const generatePrecache = async (buildResult, buildId, swConfig, entryPath) => {
+  const content = `self.__precacheManifest = ${JSON.stringify(
+    Object.keys(buildResult.output).filter(o => !excludeRoutes.exec(o))
+  )}`;
+
+  const filename = `next-precache-manifest-${hash(content)}.js`;
+  const routes = await createPage({
+    output: buildResult.output,
+    entryPath,
+    filename: filename,
+    content: content,
+    buildId,
+  });
+
+  // add imported scripts to sw
+  swConfig.importScripts = [
+    routes,
+    getModuleURL('workbox-sw'),
+    ...swConfig.importScripts,
+  ];
+};
+
+const generateSW = async (buildResult, buildId, swConfig, entryPath) => {
+  const content = await generateSWString(swConfig);
+  return await createPage({
+    output: buildResult.output,
+    entryPath,
+    filename: 'sw.js',
+    content: content.swString,
+    buildId,
+  });
+};
+
 export const build = async ({
   files,
   workPath,
@@ -83,50 +115,30 @@ export const build = async ({
     meta,
   });
 
-  // entry path
-  const entryDirectory = path.dirname(entrypoint);
-  const entryPath = path.join(workPath, entryDirectory);
+  const entryPath = path.join(workPath, path.dirname(entrypoint));
 
-  // extracting build id
-  const buildId = getBuildId(buildResult.output);
-  console.log('extracting build id', buildId);
+  if (!meta.isDev) {
+    const buildId = getBuildId(buildResult.output);
+    await generatePrecache(buildResult, buildId, swConfig, entryPath);
+    const swRoute = await generateSW(buildResult, buildId, swConfig, entryPath);
 
-  // generating precachese
-  const swPrecacheContent = `self.__precacheManifest = ${JSON.stringify(
-    Object.keys(buildResult.output).filter(o => !excludeRoutes.exec(o))
-  )}`;
+    buildResult.routes.unshift({
+      src: '/sw.js',
+      dest: swRoute,
+    });
+  } else {
+    swConfig.importScripts = [
+      getModuleURL('workbox-sw'),
+      ...swConfig.importScripts,
+    ];
 
-  const swPrecache = `next-precache-manifest-${hash(swPrecacheContent)}.js`;
-  const swPrecacheRoute = await createPage({
-    buildResult,
-    entryPath,
-    filename: swPrecache,
-    content: swPrecacheContent,
-    buildId,
-  });
+    await generateSW(buildResult, 'development', swConfig, entryPath);
+    buildResult.routes.unshift({
+      src: '/sw.js',
+      dest: 'http://localhost:5000/sw.js',
+    });
 
-  // add imported scripts to sw
-  swConfig.importScripts = [
-    swPrecacheRoute,
-    getModuleURL('workbox-sw'),
-    ...swConfig.importScripts,
-  ];
-
-  // generating sw.js
-  const swJSContent = await generateSWString(swConfig);
-  const swJSRoute = await createPage({
-    buildResult,
-    entryPath,
-    filename: 'sw.js',
-    content: swJSContent.swString,
-    buildId,
-  });
-
-  // add /sw.js path to routes
-  buildResult.routes.unshift({
-    src: '/sw.js',
-    dest: swJSRoute,
-  });
+  }
 
   console.log(buildResult);
 
