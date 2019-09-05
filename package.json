@@ -27,6 +27,7 @@
     "aws-lambda": "^0.1.2",
     "fs-extra": "^8.1.0",
     "get-port": "^5.0.0",
+    "intersect-json": "^0.1.2",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "resolve-from": "^5.0.0",
