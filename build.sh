@@ -10,3 +10,6 @@ rm -rf dist/dev
 ncc build src/index.js -o dist/main
 mv dist/main/index.js dist/index.js
 rm -rf dist/main
+
+cp node_modules/@now/next/dist/now__bridge.js dist/now__bridge.js
+cp node_modules/@now/next/dist/templated-launcher.js dist/templated-launcher.js

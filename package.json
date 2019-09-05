@@ -1,7 +1,12 @@
 {
   "name": "now-next-pwa",
-  "version": "0.1.00",
+  "version": "0.1.1",
   "license": "MIT",
+  "author": {
+    "name": "Jimmy Moon",
+    "email": "ragingwind@gmail.com",
+    "url": "https://jimmy.im"
+  },
   "main": "dist/index.js",
   "repository": {
     "type": "git",
