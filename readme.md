@@ -2,6 +2,8 @@
 
 > now builder for Next.js PWA. WARNING, This project is in experimental stage. APIs and others would be changed
 
+<img width="1024" alt="" src="https://user-images.githubusercontent.com/124117/64928886-1f47d100-d859-11e9-9422-f70cd953e0a0.png">
+
 # Getting Started
 
 ## Set up project and Install builder
@@ -11,7 +13,7 @@ now init nextjs
 cd nextjs
 ```
 
-## Add code doe service worker register to pages/index.js
+## Add code for service worker registeration to pages/index.js
 
 ```js
 import React, { useEffect } from 'react';
@@ -37,7 +39,7 @@ function Home() {
 }
 ```
 
-## Add manifest <link> to components/head.js, and icons to `static`
+## Add manifest <link> to components/head.js and icon resources under `static`
 
 ```js
 const Head = props => (
