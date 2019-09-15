@@ -1,6 +1,6 @@
 {
   "name": "now-next-pwa",
-  "version": "0.1.1",
+  "version": "0.1.10",
   "license": "MIT",
   "author": {
     "name": "Jimmy Moon",
@@ -42,5 +42,8 @@
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5"
+  },
+  "dependencies": {
+    "@pwa/manifest": "^1.1.0"
   }
 }

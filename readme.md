@@ -34,9 +34,32 @@ function Index() {
     ...
   );
 }
-
 ```
-## Update `now.json`
+
+## Add manifest <link> to _document.js
+
+```js
+import Document, { Html, Head, Main, NextScript } from 'next/document';
+
+class MyDocument extends Document {
+  render() {
+    return (
+      <Html>
+        <Head>
+          <link rel="manifest" href="/manifest.json" />
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}
+
+export default MyDocument;
+```
+## Config `now.json` with manifest custom setting as you need
 
 ```json
 {
@@ -44,7 +67,25 @@ function Index() {
   "builds": [
     {
       "src": "package.json",
-      "use": "now-next-pwa"
+      "use": "now-next-pwa",
+      "config": {
+        "manifest": {
+          "name": "NEXT-PWA-BASIC",
+          "short_name": "NEXT-PWA-BASIC",
+          "icons": [
+            {
+              "src": "/static/icon-192x192.png",
+              "sizes": "192x192",
+              "type": "image/png"
+            },
+            {
+              "src": "/static/icon-512x512.png",
+              "sizes": "512x512",
+              "type": "image/png"
+            }
+          ]
+        }
+      }
     }
   ]
 }
@@ -54,6 +95,12 @@ function Index() {
 
 ```sh
 now
+```
+
+or you can test in development mode of now
+
+```sh
+now dev
 ```
 
 # License

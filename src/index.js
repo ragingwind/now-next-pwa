@@ -28,6 +28,27 @@ const swConfig = {
   importScripts: [],
 };
 
+const manifestConfig = {
+  name: 'NEXT-PWA',
+  short_name: 'NEXT-PWA',
+  start_url: './?utm_source=web_app_manifest',
+  display: 'standalone',
+  background_color: '#EFEFEF',
+  theme_color: '#FFEEFF',
+  icons: [
+    {
+      src: '/static/icon-192x192.png',
+      sizes: '192x192',
+      type: 'image/png',
+    },
+    {
+      src: '/static/icon-512x512.png',
+      sizes: '512x512',
+      type: 'image/png',
+    },
+  ],
+};
+
 const excludeRoutes = new RegExp(/_error$/);
 
 const createPage = async ({
@@ -100,6 +121,16 @@ const generateSW = async (buildResult, buildId, swConfig, entryPath) => {
   });
 };
 
+const generateManifest = async (buildResult, buildId, manifest, entryPath) => {
+  await createPage({
+    output: buildResult.output,
+    entryPath,
+    filename: 'manifest.json',
+    content: JSON.stringify(manifest, null, 2),
+    buildId,
+  });
+};
+
 export const build = async ({
   files,
   workPath,
@@ -116,16 +147,27 @@ export const build = async ({
   });
 
   const entryPath = path.join(workPath, path.dirname(entrypoint));
+  const manifest = config.manifest || {};
 
   if (!meta.isDev) {
     const buildId = getBuildId(buildResult.output);
     await generatePrecache(buildResult, buildId, swConfig, entryPath);
-    const swRoute = await generateSW(buildResult, buildId, swConfig, entryPath);
 
+    const swRoute = await generateSW(buildResult, buildId, swConfig, entryPath);
     buildResult.routes.unshift({
       src: '/sw.js',
       dest: swRoute,
     });
+
+    generateManifest(
+      buildResult,
+      buildId,
+      {
+        ...manifestConfig,
+        ...manifest,
+      },
+      entryPath
+    );
   } else {
     swConfig.importScripts = [
       getModuleURL('workbox-sw'),
@@ -138,9 +180,16 @@ export const build = async ({
       dest: 'http://localhost:5000/sw.js',
     });
 
+    generateManifest(
+      buildResult,
+      'development',
+      {
+        ...manifestConfig,
+        ...manifest,
+      },
+      entryPath
+    );
   }
-
-  console.log(buildResult);
 
   return buildResult;
 };

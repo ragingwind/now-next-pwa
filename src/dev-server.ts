@@ -29,10 +29,19 @@ async function main(cwd: string) {
 
   process.env = intersectJson(process.env, runtimeEnv);
 
+  const pwaRoutes = [
+    '/sw.js',
+    '/manifest.json'
+  ]
+
   createServer((req, res) => {
     const parsedUrl = parse(req.url || '', true);
-    if (parsedUrl.pathname === '/sw.js') {
-      app.serveStatic(req, res, path.resolve('./.next/static/development/pages/sw.js'))
+    if (pwaRoutes.find(r => r === parsedUrl.pathname)) {
+      app.serveStatic(
+        req,
+        res,
+        path.resolve(`./.next/static/development/pages${parsedUrl.pathname}`)
+      );
     } else {
       handler(req, res, parsedUrl);
     }
