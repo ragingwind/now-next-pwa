@@ -11,12 +11,13 @@ now init nextjs
 cd nextjs
 ```
 
-## Add service worker register code at pages/index.js
+## Add code doe service worker register to pages/index.js
 
 ```js
 import React, { useEffect } from 'react';
 
-function Index() {
+function Home() {
+  ...
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
@@ -36,30 +37,21 @@ function Index() {
 }
 ```
 
-## Add manifest <link> to _document.js
+## Add manifest <link> to components/head.js, and icons to `static`
 
 ```js
-import Document, { Html, Head, Main, NextScript } from 'next/document';
-
-class MyDocument extends Document {
-  render() {
-    return (
-      <Html>
-        <Head>
-          <link rel="manifest" href="/manifest.json" />
-        </Head>
-        <body>
-          <Main />
-          <NextScript />
-        </body>
-      </Html>
-    );
-  }
-}
-
-export default MyDocument;
+const Head = props => (
+  <NextHead>
+    <meta charSet="UTF-8" />
+    ...
+    <link rel="icon" href="/static/favicon.ico" />
+    <link rel="manifest" href="/manifest.json" />
+    ...
+  </NextHead>
+);
 ```
-## Config `now.json` with manifest custom setting as you need
+
+## Configure `now.json` with manifest custom setting as you need
 
 ```json
 {
