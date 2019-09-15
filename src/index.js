@@ -122,7 +122,7 @@ const generateSW = async (buildResult, buildId, swConfig, entryPath) => {
 };
 
 const generateManifest = async (buildResult, buildId, manifest, entryPath) => {
-  await createPage({
+  return await createPage({
     output: buildResult.output,
     entryPath,
     filename: 'manifest.json',
@@ -159,7 +159,7 @@ export const build = async ({
       dest: swRoute,
     });
 
-    generateManifest(
+    const mfRoute = await generateManifest(
       buildResult,
       buildId,
       {
@@ -168,6 +168,11 @@ export const build = async ({
       },
       entryPath
     );
+
+    buildResult.routes.unshift({
+      src: '/manifest.json',
+      dest: mfRoute,
+    });
   } else {
     swConfig.importScripts = [
       getModuleURL('workbox-sw'),
@@ -180,7 +185,7 @@ export const build = async ({
       dest: 'http://localhost:5000/sw.js',
     });
 
-    generateManifest(
+    await generateManifest(
       buildResult,
       'development',
       {
