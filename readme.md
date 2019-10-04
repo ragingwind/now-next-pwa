@@ -13,7 +13,7 @@ now init nextjs
 cd nextjs
 ```
 
-## Add code for service worker registeration to pages/index.js
+## Add code for service worker registration to pages/index.js
 
 ```js
 import React, { useEffect } from 'react';
