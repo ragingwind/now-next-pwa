@@ -2,7 +2,7 @@ import path from 'path';
 import crypto from 'crypto';
 import { build as nextBuild } from '@now/next';
 import { FileFsRef } from '@now/build-utils';
-import { writeFile } from 'fs-extra';
+import { writeFile, readFile } from 'fs-extra';
 import {
   generateSWString,
   copyWorkboxLibraries,
@@ -15,8 +15,10 @@ const hash = ctx =>
     .update(ctx, 'utf8')
     .digest('hex');
 
-const swConfig = {
+const workboxConfigDefault = {
   globPatterns: [],
+  globIgnores: [],
+  globStrict: false,
   clientsClaim: true,
   skipWaiting: true,
   runtimeCaching: [
@@ -28,7 +30,32 @@ const swConfig = {
   importScripts: [],
 };
 
-const manifestConfig = {
+const excludeworkboxConfigs = [
+  'globDirectory',
+  'importWorkboxFrom',
+  'directoryIndex',
+  'globFollow',
+  'templatedURLs',
+  'dontCacheBustURLsMatching',
+  'manifestTransforms',
+];
+
+const filterworkboxConfig = opts => {
+  const workboxConfig = {
+    ...workboxConfigDefault,
+    ...opts
+  }
+
+  excludeworkboxConfigs.forEach(e => {
+    if (workboxConfig[e]) {
+      console.error(`${workboxConfig[e]} option doesn't supported yet, it would be ignored`);
+      delete workboxConfig[e];
+    }
+  })
+
+  return workboxConfig
+}
+const manifestConfigDefault = {
   name: 'NEXT-PWA',
   short_name: 'NEXT-PWA',
   start_url: './?utm_source=web_app_manifest',
@@ -88,30 +115,37 @@ const getBuildId = output => {
   return buildId;
 };
 
-const generatePrecache = async (buildResult, buildId, swConfig, entryPath) => {
+const importScripts = async (buildResult, buildId, entryPath, workboxConfig, workPath) => {
+  return await Promise.all(workboxConfig.importScripts.map(async s => {
+    const content = await readFile(path.join(workPath, s));
+
+    return createPage({
+      output: buildResult.output,
+      entryPath,
+      filename: path.basename(s),
+      content: content,
+      buildId,
+    });
+  }))
+}
+
+const generatePrecache = async (buildResult, buildId, entryPath) => {
   const content = `self.__precacheManifest = ${JSON.stringify(
     Object.keys(buildResult.output).filter(o => !excludeRoutes.exec(o))
   )}`;
 
   const filename = `next-precache-manifest-${hash(content)}.js`;
-  const routes = await createPage({
+  return await createPage({
     output: buildResult.output,
     entryPath,
     filename: filename,
     content: content,
     buildId,
   });
-
-  // add imported scripts to sw
-  swConfig.importScripts = [
-    routes,
-    getModuleURL('workbox-sw'),
-    ...swConfig.importScripts,
-  ];
 };
 
-const generateSW = async (buildResult, buildId, swConfig, entryPath) => {
-  const content = await generateSWString(swConfig);
+const generateSW = async (buildResult, buildId, workboxConfig, entryPath) => {
+  const content = await generateSWString(workboxConfig);
   return await createPage({
     output: buildResult.output,
     entryPath,
@@ -148,12 +182,20 @@ export const build = async ({
 
   const entryPath = path.join(workPath, path.dirname(entrypoint));
   const manifest = config.manifest || {};
+  const workboxConfig = filterworkboxConfig(config.workbox || {});
 
   if (!meta.isDev) {
     const buildId = getBuildId(buildResult.output);
-    await generatePrecache(buildResult, buildId, swConfig, entryPath);
+    const precache = await generatePrecache(buildResult, buildId, entryPath);
+    const scripts = await importScripts(buildResult, buildId, entryPath, workboxConfig, workPath);
 
-    const swRoute = await generateSW(buildResult, buildId, swConfig, entryPath);
+    workboxConfig.importScripts = [
+      precache,
+      ...scripts,
+      getModuleURL('workbox-sw'),
+    ];
+
+    const swRoute = await generateSW(buildResult, buildId, workboxConfig, entryPath);
     buildResult.routes.unshift({
       src: '/sw.js',
       dest: swRoute,
@@ -163,7 +205,7 @@ export const build = async ({
       buildResult,
       buildId,
       {
-        ...manifestConfig,
+        ...manifestConfigDefault,
         ...manifest,
       },
       entryPath
@@ -174,12 +216,12 @@ export const build = async ({
       dest: mfRoute,
     });
   } else {
-    swConfig.importScripts = [
+    workboxConfig.importScripts = [
       getModuleURL('workbox-sw'),
-      ...swConfig.importScripts,
+      ...workboxConfig.importScripts,
     ];
 
-    await generateSW(buildResult, 'development', swConfig, entryPath);
+    await generateSW(buildResult, 'development', workboxConfig, entryPath);
     buildResult.routes.unshift({
       src: '/sw.js',
       dest: 'http://localhost:5000/sw.js',
@@ -189,7 +231,7 @@ export const build = async ({
       buildResult,
       'development',
       {
-        ...manifestConfig,
+        ...manifestConfigDefault,
         ...manifest,
       },
       entryPath

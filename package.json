@@ -1,6 +1,6 @@
 {
   "name": "now-next-pwa",
-  "version": "0.3.2",
+  "version": "0.3.30",
   "license": "MIT",
   "author": {
     "name": "Jimmy Moon",
@@ -21,8 +21,8 @@
     "prepublishOnly": "./build.sh"
   },
   "devDependencies": {
-    "@now/build-utils": "^0.9.13",
-    "@now/next": "^0.7.0",
+    "@now/build-utils": "^0.10.1",
+    "@now/next": "^1.0.3",
     "@types/aws-lambda": "^8.10.31",
     "@types/fs-extra": "^8.0.0",
     "@types/glob": "^7.1.1",

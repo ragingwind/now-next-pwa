@@ -326,15 +326,15 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@now/build-utils@^0.9.13":
-  version "0.9.13"
-  resolved "https://registry.yarnpkg.com/@now/build-utils/-/build-utils-0.9.13.tgz#46fb6e5b54ab651622cb14fcf44f649d0e223fb6"
-  integrity sha512-PtS143R6OcZfmkh7z3vo8za5OQnik5BdrNA6V4ntih4VolWwnAwJvN9M5ZVL5DYR+gXv72jhwpCL/x2SW/UrXA==
+"@now/build-utils@^0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@now/build-utils/-/build-utils-0.10.1.tgz#6f50d3a811c8cbefc643e295fa52239e93d7ef77"
+  integrity sha512-+FszUNz+JilS3OD0gY/F38H2Crz+OLHKjzW1uHHF7MHkklGWdkhT9KI3ae44RrpNLJK7TQ8hfB2grdrAOK2aHw==
 
-"@now/next@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@now/next/-/next-0.7.0.tgz#b172b4cc036c11a499ee6957b394cc7e4f4c9ff9"
-  integrity sha512-UuVWFvyIENTX8mH2dyoD2tnK5MZhDz3cSUHkxDdVx03XRhbwnXCs56y0L1FSPdTKpn9WoHi9GnG5JcfaqAJMGQ==
+"@now/next@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@now/next/-/next-1.0.3.tgz#43de381165c60d7a746df21595339723ec435f35"
+  integrity sha512-HexR9NUmT5t0ix2Oktn2EGfJ9PUOGMQA2Wp591BFJAMGB+40epZNZx4V//pvNjXKA0I2ghZEvmxxjd/SPYv1pw==
 
 "@pwa/manifest@^1.1.0":
   version "1.1.0"
@@ -2887,6 +2887,11 @@ normalize-path@^2.1.1:
   integrity sha1-GrKLVW4Zg2Oowab35vogE3/mrtk=
   dependencies:
     remove-trailing-separator "^1.0.1"
+
+now@^16.3.1:
+  version "16.3.1"
+  resolved "https://registry.yarnpkg.com/now/-/now-16.3.1.tgz#e1109145d0e8a4508b3e011f1c2b7047cb8733da"
+  integrity sha512-bn+xHUiPRH1YRfe/hSo5WZUskOLX3igL4PTe9gnoLaUoq9ZuBQw5/6A4gG4VvW2HVQLgeRkp2OASfYnjuD+lcQ==
 
 npm-bundled@^1.0.1:
   version "1.0.6"

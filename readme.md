@@ -53,7 +53,7 @@ const Head = props => (
 );
 ```
 
-## Configure `now.json` with manifest custom setting as you need
+## Configure `now.json` with workbox and manifest custom setting as you need
 
 ```json
 {
@@ -63,6 +63,14 @@ const Head = props => (
       "src": "package.json",
       "use": "now-next-pwa",
       "config": {
+        "workbox": {
+          "globPatterns": [],
+          "globIgnores": [],
+          "importScripts": [
+            "libs/sw-imports.js"
+          ],
+          "offlineGoogleAnalytics": false
+        },
         "manifest": {
           "name": "NEXT-PWA-BASIC",
           "short_name": "NEXT-PWA-BASIC",
