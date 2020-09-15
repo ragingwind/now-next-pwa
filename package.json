@@ -29,7 +29,7 @@
     "@types/next-server": "8.0.0",
     "@types/node": "^12.7.2",
     "@zeit/ncc": "^0.20.4",
-    "aws-lambda": "^0.1.2",
+    "aws-lambda": "^1.0.5",
     "fs-extra": "^8.1.0",
     "get-port": "^5.0.0",
     "intersect-json": "^0.1.2",
